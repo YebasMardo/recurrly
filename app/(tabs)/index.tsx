@@ -2,6 +2,7 @@ import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
+import { useUser } from "@clerk/expo";
 import avatar from "@/assets/images/avatar.png";
 import { icons } from "@/constants/icons";
 import {
@@ -17,10 +18,14 @@ import SubscriptionCard from "@/components/SubscriptionCard";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
-const index = () => {
+const Home = () => {
+  const { user } = useUser();
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
+
+  const displayName = user?.firstName || user?.fullName || "there";
+
   return (
     <SafeAreaView className="bg-background flex-1 p-5">
       <FlatList
@@ -28,8 +33,11 @@ const index = () => {
           <>
             <View className="home-header">
               <View className="home-user">
-                <Image source={avatar} className="home-avatar" />
-                <Text className="home-user-name">Pierre Y.</Text>
+                <Image
+                  source={user?.imageUrl ? { uri: user.imageUrl } : avatar}
+                  className="home-avatar"
+                />
+                <Text className="home-user-name">{displayName}</Text>
               </View>
               <Image source={icons.add} className="home-add-icon" />
             </View>
@@ -66,7 +74,7 @@ const index = () => {
               />
             </View>
 
-            <ListHeading title="Subscriptions" />
+            <ListHeading title="All Subscriptions" />
           </>
         )}
         data={HOME_SUBSCRIPTIONS}
@@ -88,12 +96,12 @@ const index = () => {
         ListEmptyComponent={
           <Text className="home-empty-state">No subscriptions yet.</Text>
         }
-        contentContainerClassName="pb-30"
+        contentContainerClassName="pb-20"
       />
     </SafeAreaView>
   );
 };
 
-export default index;
+export default Home;
 
 const styles = StyleSheet.create({});
