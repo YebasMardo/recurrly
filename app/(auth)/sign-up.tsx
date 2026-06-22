@@ -62,8 +62,17 @@ const SignUp = () => {
 
     if (signUp.status === "complete") {
       await completeSignUp();
-    } else {
-      await signUp.verifications.sendEmailCode();
+      return;
+    }
+
+    const { error: sendCodeError } = await signUp.verifications.sendEmailCode();
+    if (sendCodeError) {
+      console.error("Failed to send verification code:", sendCodeError);
+      setFormError(
+        sendCodeError.longMessage ??
+          sendCodeError.message ??
+          "We couldn't send a verification code. Please try again.",
+      );
     }
   };
 

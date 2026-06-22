@@ -50,7 +50,21 @@ const SignIn = () => {
       const emailCodeFactor = signIn.supportedSecondFactors.find(
         (factor) => factor.strategy === "email_code",
       );
-      if (emailCodeFactor) await signIn.mfa.sendEmailCode();
+      if (emailCodeFactor) {
+        const { error: sendCodeError } = await signIn.mfa.sendEmailCode();
+        if (sendCodeError) {
+          console.error("Failed to send verification code:", sendCodeError);
+          setFormError(
+            sendCodeError.longMessage ??
+              sendCodeError.message ??
+              "We couldn't send a verification code. Please try again.",
+          );
+        }
+      } else {
+        setFormError(
+          "Email verification isn't available for this account. Please contact support.",
+        );
+      }
     } else {
       setFormError("We couldn't sign you in. Please try again.");
     }

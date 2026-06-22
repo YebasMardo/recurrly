@@ -18,7 +18,12 @@ const Settings = () => {
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
-    await signOut();
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Sign-out failed:", error);
+      setIsSigningOut(false);
+    }
   };
 
   return (
